@@ -1,23 +1,12 @@
-const fs = require("fs");
 const { parse } = require("csv-parse"); // compararing with 3 differents libreries (fast-csv, node-csv, csv-parse) this was the faster
 const { ShapeManager } = require("./shape_manager");
 const FileProcessorInterface = require("../interfaces/file_processor_interface");
-const {openDataToRead, errorDataReadProcess, closeDataReadProcess} = require("../commons/utils");
+const { openDataToRead, errorDataReadProcess, closeDataReadProcess } = require("../commons/utils");
 
 class CsvFileProcessor extends FileProcessorInterface {
 
-	constructor(pathFile, shapeType) {
-		super(pathFile, shapeType);
-		this.processedOK = false;
-	}
-
-	async readStreamProcess() {
-		console.time("Time it took to process the file");
-		// to create a readable stream. Streams let you work with large amounts of data by allowing you to access it in chunks.
-		const stream = fs.createReadStream(this.pathFile);
-		const processed = await this.processFile(stream);
-		console.timeEnd("Time it took to process the file");
-		return processed;
+	constructor(path_file, shape_type) {
+		super(path_file, shape_type);
 	}
 
 	processFile(stream) {
@@ -37,21 +26,24 @@ class CsvFileProcessor extends FileProcessorInterface {
 							this.dataReadProcess(row, this.shapeType)
 						})
 						.on("end", () => {
-							resolve(this.processedOK);
+							resolve(true);
 						})
 						.on("close", closeDataReadProcess)
 				});
 		});
 	}
 
-	dataReadProcess (row, shapeType) {
+	dataReadProcess(row, shapeType) {
 		const sm = new ShapeManager(shapeType);
-		const shape = sm.createShape(+row[0]); //implicit conversion to number
-		
-		if (typeof shape === "object"){
-			this.processedOK = true; 
-			console.log(shape.area());
+		const readValue = row[0];
+		// validate the type value
+		if (isNaN(readValue)) {
+			console.log("This value is not a number.");
+			return;
 		}
+
+		const shape = sm.generateShape(+readValue); //implicit conversion to number
+		console.log(shape.area());
 	}
 }
 

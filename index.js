@@ -1,4 +1,4 @@
-const { checkFileExist } = require("./src/file_verificacion");
+const { startProcess } = require("./src/start_process");
 
-//Testing ok call
-(async () => await checkFileExist("input", ".csv", "square"))(); //IIFE
+// start process
+(async () => await startProcess("input", ".csv", "square"))(); //IIFE

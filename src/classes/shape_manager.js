@@ -6,16 +6,26 @@ class ShapeManager {
 		this.shapeType = shape_type;
 	}
 
-	createShape(number) {
+	generateShape(number) {
 		let newShape;
 		switch (this.shapeType) {
 			case "square":
 				newShape = new Square(number);
 				break;
 			default:
-				console.log("This shape type is not implemented");
+				throw Error(`Shape type: ${this.shapeType} is not implemented`);
 		}
 		return newShape;
+	}
+
+	static validateShapeType(shapeType){
+		let validatation = false;
+		switch (shapeType) {
+			case "square":
+				validatation = true;
+				break;
+		}
+		return validatation;
 	}
 }
 
